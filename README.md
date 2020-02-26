@@ -1,5 +1,6 @@
 # PoPETs2020
-Source code of Ah-Fat and Huth's PoPETs'20 paper
+Source code of the evaluations performed in Patrick Ah-Fat and Michael Huth's PoPETs'20 paper:
+"Protecting Private Inputs: Bounded Distortion Guarantees With Randomised Approximations"
 
 This repository contains the code that we used to perform our experiments on randomised approximations with bounded distortion guarantees. 
 
