@@ -1,1 +1,1 @@
-This directory will contains results of privacy evaluations. 
+This directory will contain results of privacy evaluations. 
