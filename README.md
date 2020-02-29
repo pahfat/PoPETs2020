@@ -14,3 +14,5 @@ This repository contains the code that we used to perform our experiments on ran
 - exp5.py and exp6.py contain additional experiments 5 and 6 on interactive functions
 
 - experiments and experimentsUtility are directories for output files
+
+Usage: Experiments can be run by executing the corresponding script without any argument, for example experiment E1 can be performed by running "exp1.py". Those experiments might take a few hours to complete. For testing purposes we recommend that you use smaller values for parameters nb_iter and maxi, e.g. by setting nb_iter to 5 and maxi to 10. 
