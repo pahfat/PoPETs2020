@@ -4,14 +4,11 @@
 function wme() implements the min-entropy H(Y|f(Y,Z))
 """
 
-### notations ###
+# notations
 
 # X : attackers (vector)
 # Y : targets (vector)
 # Z : spectators (vector)
-
-
-### imports ###
 
 import itertools
 from functools import reduce
@@ -19,13 +16,9 @@ import operator
 import inspect
 import sys
 import math
-#from scipy.stats import entropy as entt
 
 iproduct = itertools.product
 
-### defs ###
-
-# same as sum
 def prod(X):
   return reduce(operator.mul, X, 1)
 
@@ -41,22 +34,16 @@ def wme(f, pYs, pZs, X):
   # precondition
   # bypass precondition if number of arguments == 0, i.e. if f is defined as a function of another function
   if len(X) + len(pYs) + len(pZs) != len(inspect.getargspec(f)[0]) and len(inspect.getargspec(f)[0]) != 0:
-    print("len(X) = {}".format(len(X)))
-    print("len(pYs) = {}".format(len(pYs)))
-    print("len(pZs) = {}".format(len(pZs)))
-    print("len(f) = {}".format(len(inspect.getargspec(f)[0])))
-    sys.exit("Oops: Number of arguments didn't match")
+    sys.exit("Aborted: Number of function arguments and inputs didn't match")
   
   if len(inspect.getargspec(f)[0]) == 0:
     try:
-      # unexpected exception when domain of f is restricted!
-      #a = f(*((0,)*(len(X) + len(pYs) + len(pZs))))
       a = f( *( X + tuple(list(pp.keys())[0] for pp in pYs) + tuple(list(pp.keys())[0] for pp in pZs)) )
     except KeyError:
       # here we tolerate KeyError because merged functions might not recognise input (0, 0, ...)
       pass
     except:
-      sys.exit("Oops2: Number of arguments didn't match")
+      sys.exit("Aborted: Number of function arguments and inputs didn't match")
   
   # prior distribution for Output
   pO = dict()
@@ -79,25 +66,16 @@ def wme(f, pYs, pZs, X):
           pO[o] = p_o
           pOaY[o] = {Y: p_o}
         
-  ### then convert pOaY into pYgO (kinda Bayes)
-  # entropiesY stores the entropy of Y given output
-  #entropiesY = dict()
+  # then convert pOaY into pYgO (kinda Bayes)
   # maxsY stores the maximal probability of each distribution of pYgO for each o
   maxsY = dict()
   for output in pO: # or in pOgY, equivalently
     for Y in pOaY[output]:
-    #for Y in itertools.product(*pYs):
-      #p_y = prod( (pY[y] for (y, pY) in zip(Y, pYs)) )
       pOaY[output][Y] /= pO[output]
-    # min_entropy here
-    #entropiesY[output] = min_entropy(pOaY[output].values())
+      
     maxsY[output] = max(pOaY[output].values())
-    #
-    #if (len(pOaY[output].values())>1):
-    #  print("hello: {}".format(pOaY[output].values()))
     
   # weighted average entropy
-  #wme = sum(pO[output]*entropiesY[output] for output in pO)
   wme = - math.log2( sum(pO[output]*maxsY[output] for output in pO) )
   
   return wme

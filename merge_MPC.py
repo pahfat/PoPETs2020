@@ -9,27 +9,22 @@ import itertools
 import operator
 from functools import reduce
 
-# same as sum
 def prod(X):
   return reduce(operator.mul, X, 1)
 
-# takes an output support O ()
+# takes an output support O
 # and returns a function 
 # that maps O to a new domain O'
 # dmerge (deterministic merge) merges as many outputs as
 # maximal distortion d allows, from lowest output
 def dmerge(support, max_d): 
-  #print("dmerge called!")
   y = min(support) - max_d - 1
   d = dict()
   for x in sorted(support):
-    # abs(x - y) not needed as x is increasing
     if x - y > max_d:
       y = x + max_d
     d[x] = y
-  # create function out of dictionary
   def f(x):
-    #print("f called!")
     return d[x]
   return f
 

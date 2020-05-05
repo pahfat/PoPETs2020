@@ -4,28 +4,21 @@
 function wme_gen() implements the g-entropy H_g(Y|f(Y,Z))
 """
 
-### notations ###
+# notations
 
 # X : attackers (vector)
 # Y : victims (vector)
 # Z : other parties (vector)
-
-
-### imports ###
 
 import itertools
 from functools import reduce
 import operator
 import inspect
 import sys
-#import math
 import mpmath
 
 iproduct = itertools.product
 
-### defs ###
-
-# same as sum
 def prod(X):
   return reduce(operator.mul, X, 1)
 
@@ -40,7 +33,6 @@ def renyi_entropy(l, alpha):
   else:
     return mpmath.log(sum(x**alpha for x in ll), b=2) / (1 - alpha)
 
-
 # alpha : real in ]0, 1[ union ]1, infinity[ (alpha=1 is special)  ### -1 for infinity
 # pYs, pZs : list of dictionaries
 # g: gain function, as dictionary of dictionary: g[w][y] = gain
@@ -52,18 +44,10 @@ def wme_gen(f, pYs_p, pZs_p, X, alpha, g_p, delta=0):
   g = {w:{y:mpmath.mpmathify(g_p[w][y]) for y in g_p[w]} for w in g_p}
   delta = mpmath.mpmathify(delta)
   
-  # to del next lines (try arrange g)
-  #g2 = {w:{x:g[w][x]/sum(g[ww][x] for ww in g if x in g[ww])**(1/alpha) for x in g[w]} for w in g}
-  #g = g2
-
   # precondition
   # bypass precondition if number of arguments == 0, i.e. if f is defined as a function of another function
   if len(X) + len(pYs) + len(pZs) != len(inspect.getargspec(f)[0]) and len(inspect.getargspec(f)[0]) != 0:
-    print("len(X) = {}".format(len(X)))
-    print("len(pYs) = {}".format(len(pYs)))
-    print("len(pZs) = {}".format(len(pZs)))
-    print("len(f) = {}".format(len(inspect.getargspec(f)[0])))
-    sys.exit("Oops: Number of arguments didn't match")
+    sys.exit("Aborted: Number of function arguments and inputs didn't match")
   
   if len(inspect.getargspec(f)[0]) == 0:
     try:
@@ -72,7 +56,7 @@ def wme_gen(f, pYs_p, pZs_p, X, alpha, g_p, delta=0):
       # here we tolerate KeyError because merged functions might not recognise input (0, 0, ...)
       pass
     except:
-      sys.exit("Oops2: Number of arguments didn't match")
+      sys.exit("Aborted: Number of function arguments and inputs didn't match")
   
   # joint distribution for Output and Y
   pOaY = dict()
@@ -91,16 +75,10 @@ def wme_gen(f, pYs_p, pZs_p, X, alpha, g_p, delta=0):
         else:
           pOaY[o] = {Y: p_o}
         
-  # for all output o
   # W[o] is the vector inside the norm (over guesses w)
-  # will be evaluated only once, so use generator
   W = dict()
-  for o in pOaY: # for all existing output (since first argument of pOaY is o)
-    #W[o] = (sum(pOaY[o][Y]*g[w][Y] for Y in itertools.product(*pYs)) for w in g)
-    # above browses all Y, below browses only Y that have non zero gain for g
-    # + delta is the smoothing technique
+  for o in pOaY: 
     W[o] = [sum(pOaY[o][Y]*g[w][Y] for Y in g[w] if Y in pOaY[o]) + delta for w in g]
-    # doesn't work with generator instead of list for W[o] for some reason
   
   if alpha == -1:
     sum_o = sum(max(W[o]) for o in pOaY)
