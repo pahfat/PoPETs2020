@@ -44,7 +44,7 @@ We summarise the aims of the present experiments as follows:
   - *requirements.txt* contains the Python modules required to run the code and the versions that were used to perform the tests
 
 
-## How to run
+## How to run the experiments
 
 ### Dependencies
 
@@ -89,3 +89,8 @@ The experiments described in our paper were run on a machine with an Intel(R) Co
 ## Acknowledgments
 
 We would like to thank anonymous reviewers who helped us to improve the readability and usability of our code. 
+
+
+## License
+
+This project is licensed under the MIT license. 

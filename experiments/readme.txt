@@ -1,1 +1,1 @@
-This directory will contain results of privacy evaluations. 
+Once the privacy evaluations are executed, the results will be stored in the present directory. 
